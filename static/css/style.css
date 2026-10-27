@@ -1,0 +1,844 @@
+/* =====================================================================
+   BLACKBOX ARENA — THE MONOLITH DESIGN SYSTEM
+   Fashion-campaign stark minimalism. Solid fields. Zero gradients.
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800&display=swap');
+
+:root {
+  /* Tier Solid Chroma Fields */
+  --tier-easy: #CFE0F2;
+  --tier-medium: #FF5A1F;
+  --tier-hard: #4A0F1C;
+
+  /* Tier Text Contrast */
+  --tier-text-easy: #000000;
+  --tier-text-medium: #0b0b0c;
+  --tier-text-hard: #F8F8F7;
+
+  /* Neutral Architectural Palette */
+  --surface: #131315;
+  --surface-low: #1b1b1d;
+  --surface-lowest: #0e0e10;
+  --surface-high: #2a2a2c;
+  --on-surface: #e4e2e4;
+  --on-surface-variant: #919094;
+  --outline: #46464a;
+  --outline-variant: #353437;
+
+  /* Typography */
+  --font-display: 'Syne', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: 'Space Mono', 'Geist Mono', 'JetBrains Mono', monospace;
+
+  /* Current Active Theme */
+  --bg-current: var(--tier-easy);
+  --text-current: var(--tier-text-easy);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background-color: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbars hidden per Stitch design */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* =====================================================================
+   NAVIGATION HEADER (Fixed, stark chrome)
+   ===================================================================== */
+#app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4rem;
+  z-index: 100;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--outline-variant);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 768px) {
+  #app-header {
+    padding: 0 3rem;
+  }
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  transition: color 150ms ease, border-bottom 150ms ease;
+  padding-bottom: 0.25rem;
+}
+
+.nav-link:hover {
+  color: var(--on-surface);
+}
+
+.nav-link.active {
+  color: var(--on-surface);
+  border-bottom: 2px solid var(--on-surface);
+}
+
+.header-telemetry {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.cycle-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .cycle-badge {
+    display: flex;
+  }
+}
+
+.cycle-badge .highlight {
+  color: var(--on-surface);
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background-color: var(--surface-low);
+  border: 1px solid var(--outline-variant);
+  color: var(--on-surface);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 150ms ease;
+}
+
+.user-pill:hover {
+  background-color: var(--surface-high);
+}
+
+/* =====================================================================
+   MAIN VIEWPORT & SOLID COLOR BACKGROUND TRANSITION
+   ===================================================================== */
+#viewport-root {
+  padding-top: 4rem;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background-color: var(--bg-current);
+  color: var(--text-current);
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+.screen-container {
+  display: none;
+  width: 100%;
+  min-height: calc(100vh - 4rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.screen-container.active-screen {
+  display: flex;
+  flex-direction: column;
+}
+
+/* =====================================================================
+   3D MONOLITH CANVAS LAYER
+   ===================================================================== */
+#monolith-canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 20;
+}
+
+#monolith-three-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* =====================================================================
+   SCREEN 1: TODAY (POTD)
+   ===================================================================== */
+.today-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .today-view {
+    padding: 2.5rem 3rem;
+  }
+}
+
+.horizon-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  z-index: 30;
+}
+
+@media (min-width: 768px) {
+  .horizon-bar {
+    flex-direction: row;
+    align-items: baseline;
+  }
+}
+
+.telemetry-micro {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.telemetry-bold {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.today-hero-stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 480px;
+}
+
+/* Giant Date Numeral Layered BEHIND the Cube */
+.date-numeral-ground {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+  user-select: none;
+}
+
+.date-large-text {
+  font-family: var(--font-display);
+  font-size: clamp(80px, 16vw, 160px);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.85;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.month-outline {
+  font-size: clamp(60px, 11vw, 110px);
+  color: transparent;
+  -webkit-text-stroke: 2px currentColor;
+  opacity: 0.45;
+}
+
+.plinth-footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  z-index: 30;
+  padding-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .plinth-footer {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2.5rem;
+  background-color: #000000;
+  color: #CFE0F2;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  border: 1px solid #000000;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 150ms ease;
+}
+
+.pill-btn:hover {
+  background-color: transparent;
+  color: #000000;
+}
+
+.pill-btn:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 4px;
+}
+
+/* =====================================================================
+   SCREEN 2: PROBE (THE ORACLE MATRIX)
+   ===================================================================== */
+.probe-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 4rem);
+}
+
+.probe-top-plinth {
+  position: relative;
+  z-index: 30;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .probe-top-plinth {
+    padding: 1rem 3rem;
+  }
+}
+
+.probe-main-layout {
+  position: relative;
+  z-index: 30;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .probe-main-layout {
+    flex-direction: row;
+  }
+}
+
+/* Chronicle Tape (Left margin query history) */
+.chronicle-aside {
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media (min-width: 1024px) {
+  .chronicle-aside {
+    width: 290px;
+    shrink: 0;
+    border-bottom: none;
+    border-right: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 1.5rem;
+  }
+}
+
+.chronicle-tape-list {
+  max-height: 240px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  divide-y: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 1024px) {
+  .chronicle-tape-list {
+    max-height: calc(100vh - 18rem);
+  }
+}
+
+.tape-row {
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.tape-row .input-spec {
+  font-weight: 700;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tape-row .output-spec {
+  text-align: right;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Center Stage */
+.probe-center-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  position: relative;
+}
+
+.watermark-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-display);
+  font-size: clamp(60px, 13vw, 140px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  opacity: 0.1;
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+.stimulus-input-terminal {
+  width: 100%;
+  max-width: 540px;
+  margin-top: 1.5rem;
+  position: relative;
+  z-index: 30;
+}
+
+.terminal-line {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid currentColor;
+  padding: 0.5rem 0;
+  gap: 0.75rem;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: inherit;
+  outline: none;
+}
+
+.transmit-btn {
+  background-color: #000000;
+  color: #FF5A1F;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 100ms ease, opacity 150ms ease;
+}
+
+.transmit-btn:active {
+  transform: scale(0.96);
+}
+
+/* Solver Sliding Sheet (Right margin) */
+.solver-drawer {
+  width: 100%;
+  background-color: #F8F8F7;
+  color: #0b0b0c;
+  border-top: 1px solid #000000;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 40;
+}
+
+@media (min-width: 1024px) {
+  .solver-drawer {
+    width: 440px;
+    shrink: 0;
+    border-top: none;
+    border-left: 1px solid #000000;
+  }
+}
+
+.code-editor-area {
+  width: 100%;
+  height: 220px;
+  background-color: #131315;
+  color: #e4e2e4;
+  border: 1px solid #000000;
+  padding: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  resize: vertical;
+  outline: none;
+  line-height: 1.4;
+  tab-size: 4;
+}
+
+.code-editor-area:focus {
+  border-color: #FF5A1F;
+}
+
+.feedback-banner {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background-color: #0b0b0c;
+  color: #F8F8F7;
+  border: 1px solid #0b0b0c;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.feedback-banner.fail {
+  border-left: 4px solid #FF5A1F;
+}
+
+.feedback-banner.success {
+  border-left: 4px solid #4ade80;
+}
+
+/* =====================================================================
+   SCREEN 3: LIBRARY (ARCHIVAL INDEX)
+   ===================================================================== */
+.library-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-lowest);
+  color: var(--on-surface);
+}
+
+.library-header-bar {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--outline-variant);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .library-header-bar {
+    padding: 1.5rem 3rem;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.filter-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.filter-btn {
+  padding: 0.35rem 0.85rem;
+  background-color: var(--surface-low);
+  color: var(--on-surface-variant);
+  border: 1px solid var(--outline-variant);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.filter-btn.active, .filter-btn:hover {
+  background-color: var(--on-surface);
+  color: var(--surface-lowest);
+}
+
+.tier-chroma-strip {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: left;
+}
+
+.tier-strip-item {
+  padding: 0.5rem 1.5rem;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 200ms ease;
+}
+
+.tier-strip-item.active {
+  opacity: 1;
+}
+
+.runway-stage {
+  position: relative;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem 0;
+  overflow: hidden;
+}
+
+.runway-stepper-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  width: 3.5rem;
+  height: 4rem;
+  background-color: var(--surface-low);
+  color: var(--on-surface);
+  border: 1px solid var(--outline-variant);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  transition: all 150ms ease;
+}
+
+.runway-stepper-btn:hover {
+  background-color: var(--on-surface);
+  color: var(--surface-lowest);
+}
+
+.runway-stepper-btn.left {
+  left: 1rem;
+}
+
+.runway-stepper-btn.right {
+  right: 1rem;
+}
+
+/* Archival Ledger Table */
+.ledger-table-wrap {
+  width: 100%;
+  border-top: 1px solid var(--outline-variant);
+  background-color: var(--surface-low);
+}
+
+.ledger-row {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--outline-variant);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+@media (min-width: 768px) {
+  .ledger-row {
+    padding: 1rem 3rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.ledger-row:hover {
+  background-color: var(--surface-high);
+}
+
+.badge-easy {
+  background-color: rgba(207, 224, 242, 0.2);
+  color: #CFE0F2;
+  padding: 2px 6px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+.badge-medium {
+  background-color: rgba(255, 90, 31, 0.2);
+  color: #FF5A1F;
+  padding: 2px 6px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+.badge-hard {
+  background-color: rgba(74, 15, 28, 0.4);
+  color: #ffb4ab;
+  padding: 2px 6px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+/* =====================================================================
+   SCREEN 4: SOLVED (THE SEVERED MONOLITH)
+   ===================================================================== */
+.solved-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  position: relative;
+  background-color: #4A0F1C;
+  color: #F8F8F7;
+}
+
+@media (min-width: 768px) {
+  .solved-view {
+    padding: 2.5rem 3rem;
+  }
+}
+
+.huge-solved-title {
+  font-family: var(--font-display);
+  font-size: clamp(60px, 14vw, 150px);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.85;
+  text-transform: uppercase;
+  opacity: 0.2;
+}
+
+.rule-reveal-box {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(248, 248, 247, 0.25);
+  padding: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* =====================================================================
+   SCREEN 5: ME (CONTENDER LEDGER)
+   ===================================================================== */
+.me-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface);
+  color: var(--on-surface);
+  padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .me-view {
+    padding: 2.5rem 3rem;
+  }
+}
+
+.plain-stat-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--outline-variant);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.stat-val-large {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+/* Accessibility & Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
