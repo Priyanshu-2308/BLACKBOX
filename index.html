@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BlackBox Arena — Deduction Monograph</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="static/css/style.css"/>
+</head>
+<body>
+
+  <!-- Top Stark Navigation Chrome -->
+  <header id="app-header">
+    <nav class="nav-links">
+      <a href="#today" class="nav-link" id="nav-today">TODAY</a>
+      <a href="#library" class="nav-link" id="nav-library">LIBRARY</a>
+      <a href="#me" class="nav-link" id="nav-me">ME</a>
+    </nav>
+    <div class="header-telemetry">
+      <div class="cycle-badge">
+        <span>CYCLE.09</span>
+        <span>//</span>
+        <span class="highlight" id="header-countdown">T-07:42:19</span>
+      </div>
+      <a href="#me" class="user-pill" id="header-user-btn">
+        <span id="header-username">CONTENDER</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Viewport Root: Solid Full-Bleed Color per Tier -->
+  <main id="viewport-root">
+
+    <!-- 3D Three.js Layer (Layered between typography and foreground HUD) -->
+    <div id="monolith-canvas-container"></div>
+
+    <!-- ============================================================== -->
+    <!-- SCREEN 1: TODAY (POTD) -->
+    <!-- ============================================================== -->
+    <section id="screen-today" class="screen-container">
+      <div class="today-view">
+        <div class="horizon-bar">
+          <div style="display:flex; flex-direction:column; gap:0.25rem;">
+            <span class="telemetry-micro">EDITION // VOL.XXIV</span>
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span class="telemetry-bold">BLACKBOX ARENA</span>
+              <span style="opacity:0.4;">|</span>
+              <span class="telemetry-micro">MONOLITH.EXP_04</span>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-start;">
+            <div class="telemetry-micro" style="font-weight:700;">
+              RESET IN <span id="today-countdown">--:--:--</span> • PROTOCOL 089
+            </div>
+            <span class="telemetry-micro" style="opacity:0.6;" id="today-seed-hash">SEED: DERIVED_HMAC</span>
+          </div>
+        </div>
+
+        <div class="today-hero-stage">
+          <!-- Giant Date Numeral Layered BEHIND the Cube -->
+          <div class="date-numeral-ground">
+            <div class="date-large-text">
+              <span id="today-date-num">27</span>
+              <span class="month-outline" id="today-month-str">OCT</span>
+            </div>
+            <span class="telemetry-micro" style="letter-spacing:0.5em; opacity:0.45; margin-top:-0.5rem;">
+              UNKNOWN INPUT / VECTOR DECRYPT
+            </span>
+          </div>
+        </div>
+
+        <div class="plinth-footer">
+          <div style="display:flex; flex-direction:column; gap:0.25rem;">
+            <span class="telemetry-bold" id="today-tier-label">DIFFICULTY // EASY (ICE BLUE)</span>
+            <div class="telemetry-micro" style="display:flex; gap:0.75rem;">
+              <span>FUNCTION f(x) SEALED</span>
+              <span style="opacity:0.3;">•</span>
+              <span id="today-status-badge">READY FOR EXTRACTION</span>
+            </div>
+          </div>
+          <div>
+            <a href="#probe/today" class="pill-btn" id="today-open-btn">OPEN THE BOX</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dossier Editorial Lower Section from Stitch -->
+      <div style="background-color: #131315; color: #e4e2e4; padding: 2.5rem 1.5rem; border-top: 1px solid #353437; z-index: 30; position:relative;">
+        <div style="max-width: 1400px; margin: 0 auto;">
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px solid #353437; padding-bottom: 1rem; margin-bottom: 2rem;">
+            <span class="telemetry-micro" style="color: #919094;">ARENA ARCHIVE // DOSSIER 089</span>
+            <span class="telemetry-micro" style="color: #919094;">SECRECY: MAXIMUM</span>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+            <div>
+              <div class="telemetry-bold" style="color: #c8c6c7; margin-bottom: 0.5rem;">01 // PREMISE</div>
+              <h2 style="font-family: var(--font-display); font-size: 20px; font-weight: 700; margin-bottom: 0.5rem;">The Inversion Matrix</h2>
+              <p style="color: #919094; font-size: 13px; line-height: 1.6;">
+                The black box responds only to stimulus queries. Every query passes through a hermetic transformation pipeline. Submit a Python function that reproduces f(x) across 200 hidden edge cases.
+              </p>
+            </div>
+            <div>
+              <div class="telemetry-bold" style="color: #c8c6c7; margin-bottom: 0.5rem;">02 // CONSTRAINTS</div>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; color: #919094;">
+                <li>• MAXIMUM PROBES: 30 QUERIES PER CHAMBER</li>
+                <li>• EXECUTION SANDBOX: 2.0s TIMEOUT / RESTRICTED BUILTINS</li>
+                <li>• FAILURE FEEDBACK: 1 FAILING INPUT ONLY, NEVER THE RULE</li>
+              </ul>
+            </div>
+            <div>
+              <div class="telemetry-bold" style="color: #c8c6c7; margin-bottom: 0.5rem;">03 // SCORING PROTOCOL</div>
+              <p style="color: #919094; font-size: 13px; line-height: 1.6;">
+                Rank determined first by test correctness (200/200), then fewest queries committed, then speed of synthesis. Surrender reveals the equation but voids the score.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- SCREEN 2: PROBE (THE ORACLE MATRIX) -->
+    <!-- ============================================================== -->
+    <section id="screen-probe" class="screen-container">
+      <div class="probe-view">
+        <div class="probe-top-plinth">
+          <div>
+            <div class="telemetry-micro" id="probe-chamber-id">CHAMBER: DELTA-09 // STAGE: INFERENCE</div>
+            <div style="font-family: var(--font-display); font-size: 20px; font-weight: 700; text-transform: uppercase;">
+              BLACKBOX ORACLE MATRIX
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.25rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span class="telemetry-micro" style="font-weight:700;">PROBES:</span>
+              <span class="telemetry-bold" style="font-size:14px;" id="probe-counter-text">0 / 30 MAX</span>
+            </div>
+            <!-- Dynamic Pips Array -->
+            <div id="probe-pips-container" style="display:flex; gap:3px;"></div>
+          </div>
+        </div>
+
+        <div class="probe-main-layout">
+          <!-- Chronicle Tape (Left) -->
+          <aside class="chronicle-aside">
+            <div>
+              <div style="display:flex; justify-content:space-between; border-bottom: 1px solid currentColor; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                <span class="telemetry-micro">CHRONICLE TAPE</span>
+                <span class="telemetry-micro">SYS.MEM</span>
+              </div>
+              <div class="chronicle-tape-list" id="probe-tape-list">
+                <div style="padding: 1rem 0; opacity: 0.5; text-align: center;">No probes transmitted yet.</div>
+              </div>
+            </div>
+            <div style="border-top: 1px solid rgba(0,0,0,0.15); padding-top: 1rem; margin-top: 1rem;">
+              <span class="telemetry-micro">INPUT CONSTRAINTS</span>
+              <div class="telemetry-bold" id="probe-input-type-label">TYPE: INTEGER</div>
+            </div>
+          </aside>
+
+          <!-- Center Stage (3D Cube + Input Line) -->
+          <div class="probe-center-stage">
+            <div class="watermark-text">INFERENCE</div>
+
+            <!-- Monolith Plinth Spacer (Three.js renders here) -->
+            <div style="height: 380px; width: 100%;"></div>
+
+            <!-- Stimulus Terminal Directly Beneath Cube -->
+            <div class="stimulus-input-terminal">
+              <div style="display:flex; justify-content:space-between; padding-bottom: 0.25rem;">
+                <span class="telemetry-micro">STIMULUS PROTOCOL INPUT</span>
+                <span class="telemetry-micro" id="probe-buffer-status">BUFFER: ACTIVE</span>
+              </div>
+              <div class="terminal-line">
+                <span style="font-family:var(--font-mono); font-size:15px; font-weight:700;">INPUT x &gt;</span>
+                <input type="text" id="probe-input" class="terminal-input" placeholder="e.g. 42 or 'hello'" autocomplete="off" spellcheck="false"/>
+                <button type="button" id="probe-transmit-btn" class="transmit-btn">
+                  <span>TRANSMIT</span>
+                  <span>→</span>
+                </button>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding-top:0.5rem; font-size:10px; opacity:0.75;">
+                <span id="probe-type-hint">SUPPORTS INT, STRING, LIST</span>
+                <span id="probe-charge-cost">COST: 1 PROBE CHARGE</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Solver Drawer (Right Sliding Architectural Sheet) -->
+          <section class="solver-drawer">
+            <div>
+              <div style="display:flex; justify-content:space-between; border-bottom: 1px solid #000000; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                <span class="telemetry-micro" style="font-weight:700;">SOLVER PLINTH</span>
+                <span class="telemetry-micro" style="background:#000000; color:#F8F8F7; padding: 1px 6px;">SANDBOX 2.0s</span>
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <span class="telemetry-micro" style="opacity:0.6;">HYPOTHESIS SYNTHESIS</span>
+                <h3 style="font-family:var(--font-display); font-size:18px; font-weight:700; text-transform:uppercase;">
+                  PYTHON IMPLEMENTATION
+                </h3>
+              </div>
+              <p style="font-size: 11px; line-height: 1.4; color: #46464a; margin-bottom: 0.75rem;">
+                Define <code>def f(x):</code> reproducing the transformation. Evaluated against 200 hidden test inputs.
+              </p>
+              <textarea id="solver-code-input" class="code-editor-area" spellcheck="false">def f(x):
+    # Your deduction here
+    return x
+</textarea>
+
+              <div id="solver-feedback" class="feedback-banner" style="display:none;"></div>
+            </div>
+
+            <div style="padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 0.5rem;">
+              <button type="button" id="solver-submit-btn" class="pill-btn" style="width:100%; padding:1rem; border-radius:4px; font-size:11px;">
+                SUBMIT SOLUTION
+              </button>
+              <button type="button" id="solver-giveup-btn" style="background:transparent; border:1px dashed #000000; color:#000000; padding:0.5rem; font-family:var(--font-mono); font-size:9px; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer;">
+                SURRENDER & REVEAL RULE
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- SCREEN 3: LIBRARY (ARCHIVAL INDEX) -->
+    <!-- ============================================================== -->
+    <section id="screen-library" class="screen-container">
+      <div class="library-view">
+        <div class="library-header-bar">
+          <div>
+            <span class="telemetry-micro" style="color:var(--on-surface-variant);">ARCHIVAL INDEX // PROTOCOL 304</span>
+            <div style="font-family:var(--font-display); font-size:24px; font-weight:800; text-transform:uppercase; margin-top:0.25rem;">
+              PRACTICE LIBRARY
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0.5rem;">
+            <!-- Status Filters -->
+            <div class="filter-btn-group" id="library-status-filters">
+              <button class="filter-btn active" data-status="ALL">ALL</button>
+              <button class="filter-btn" data-status="UNSOLVED">UNSOLVED</button>
+              <button class="filter-btn" data-status="ATTEMPTED">ATTEMPTED</button>
+              <button class="filter-btn" data-status="SOLVED">SOLVED</button>
+            </div>
+            <!-- Tier Filters & Actions -->
+            <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+              <div class="filter-btn-group" id="library-tier-filters">
+                <button class="filter-btn active" data-tier="ALL">ANY TIER</button>
+                <button class="filter-btn" data-tier="EASY">EASY</button>
+                <button class="filter-btn" data-tier="MEDIUM">MED</button>
+                <button class="filter-btn" data-tier="HARD">HARD</button>
+              </div>
+              <button type="button" id="lib-random-btn" class="filter-btn" style="background:var(--on-surface); color:var(--surface);">
+                RANDOM UNSOLVED
+              </button>
+              <button type="button" id="lib-batch-btn" class="filter-btn" style="border-style:dashed;">
+                + GENERATE BATCH
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Tier Chroma Bar Indicator Strip -->
+        <div class="tier-chroma-strip">
+          <div class="tier-strip-item active" id="tier-tab-easy" style="background: rgba(207, 224, 242, 0.15); color: #CFE0F2;">
+            [01] TIER.ALPHA : EASY
+          </div>
+          <div class="tier-strip-item" id="tier-tab-med" style="background: rgba(255, 90, 31, 0.15); color: #FF5A1F;">
+            [02] TIER.BETA : MEDIUM
+          </div>
+          <div class="tier-strip-item" id="tier-tab-hard" style="background: rgba(74, 15, 28, 0.25); color: #ffb4ab;">
+            [03] TIER.GAMMA : HARD
+          </div>
+        </div>
+
+        <!-- 3D Monolith Runway -->
+        <div class="runway-stage">
+          <button class="runway-stepper-btn left" id="runway-prev" aria-label="Previous">←</button>
+          <div style="height: 320px; width: 100%;"></div>
+          <button class="runway-stepper-btn right" id="runway-next" aria-label="Next">→</button>
+
+          <div style="text-align:center; position:relative; z-index:30;">
+            <div class="telemetry-micro" id="runway-active-tag">BOX SELECTION</div>
+            <h2 style="font-family:var(--font-display); font-size:24px; font-weight:800; text-transform:uppercase;" id="runway-active-title">
+              SELECT MONOLITH
+            </h2>
+            <div style="margin-top: 0.75rem;">
+              <a href="#probe/Q-E001" class="pill-btn" id="runway-enter-btn" style="padding:0.75rem 2rem;">ENTER SIMULATION</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Archival Ledger Table -->
+        <div class="ledger-table-wrap">
+          <div style="padding: 1rem 1.5rem; display:flex; justify-content:space-between; border-bottom:1px solid var(--outline-variant);">
+            <span class="telemetry-micro">ALL ARCHIVED CHAMBERS</span>
+            <span class="telemetry-micro" id="ledger-count-indicator">PAGINATION: 01</span>
+          </div>
+          <div id="library-ledger-rows">
+            <!-- Dynamic rows injected here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- SCREEN 4: SOLVED (THE SEVERED MONOLITH) -->
+    <!-- ============================================================== -->
+    <section id="screen-solved" class="screen-container">
+      <div class="solved-view">
+        <div style="display:flex; justify-content:space-between; z-index:30;">
+          <span class="telemetry-micro" id="solved-ref-tag">ARCHIVAL PLINTH // HARD TIER</span>
+          <span class="telemetry-micro">STATE: RESOLVED // ZERO DEVIATION</span>
+        </div>
+
+        <div style="position:relative; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:460px;">
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:10;">
+            <div class="huge-solved-title">BOX SEVERED</div>
+          </div>
+
+          <!-- Spacer for 3D Split Monolith -->
+          <div style="height: 340px; width:100%;"></div>
+
+          <!-- Revealed Rule Formula in Huge Stark Type -->
+          <div style="position:relative; z-index:30; width:100%; max-width:720px; margin-top:1.5rem;">
+            <div class="telemetry-micro" style="margin-bottom:0.5rem; opacity:0.8;">DECLASSIFIED GOVERNING OPERATOR</div>
+            <div class="rule-reveal-box" id="solved-rule-display">
+              f(x) = ...
+            </div>
+          </div>
+        </div>
+
+        <!-- Breakdown Telemetry Matrix -->
+        <div style="border-top: 1px solid rgba(248,248,247,0.25); border-bottom: 1px solid rgba(248,248,247,0.25); padding: 1rem 0; margin: 1.5rem 0; z-index:30;">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem; font-family:var(--font-mono); font-size:11px;">
+            <div>• DEDUCTION VERIFIED IN <span id="solved-duration" style="font-weight:700;">--</span></div>
+            <div>• QUERIES COMMITTED: <span id="solved-queries-used" style="font-weight:700;">-- / 30</span></div>
+            <div>• TEST COVERAGE: <span style="font-weight:700;">200 / 200 HIDDEN INPUTS</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; z-index:30;">
+          <div class="telemetry-micro">RECORD COMMITTED TO SQLITE LEDGER</div>
+          <a href="#library" class="pill-btn" style="background:#F8F8F7; color:#0E0E10; border-color:#F8F8F7;">
+            NEXT MONOLITH →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- SCREEN 5: ME (CONTENDER LEDGER) -->
+    <!-- ============================================================== -->
+    <section id="screen-me" class="screen-container">
+      <div class="me-view">
+        <div style="max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2rem;">
+          <div>
+            <span class="telemetry-micro" style="color:var(--on-surface-variant);">CONTENDER IDENTIFIER</span>
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--outline-variant); padding:0.5rem 0;">
+              <span id="me-username-display" style="font-family:var(--font-display); font-size:28px; font-weight:800;">CONTENDER</span>
+              <button type="button" id="me-change-user-btn" class="filter-btn">SWITCH USER</button>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+            <div class="plain-stat-item" style="flex-direction:column; align-items:flex-start;">
+              <span class="telemetry-micro">DAILY STREAK</span>
+              <div class="stat-val-large" id="me-streak-count">0 DAYS</div>
+            </div>
+            <div class="plain-stat-item" style="flex-direction:column; align-items:flex-start;">
+              <span class="telemetry-micro">TOTAL CONQUERED</span>
+              <div class="stat-val-large" id="me-total-solved">0</div>
+            </div>
+            <div class="plain-stat-item" style="flex-direction:column; align-items:flex-start;">
+              <span class="telemetry-micro">TIER BREAKDOWN</span>
+              <div style="font-family:var(--font-mono); font-size:12px; margin-top:0.5rem;">
+                <div>EASY: <span id="me-easy-count">0</span></div>
+                <div>MED: <span id="me-med-count">0</span></div>
+                <div>HARD: <span id="me-hard-count">0</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Today's Daily Leaderboard -->
+          <div>
+            <span class="telemetry-micro" style="color:var(--on-surface-variant);">TODAY'S DAILY LEADERBOARD (FEWEST QUERIES / FASTEST TIME)</span>
+            <div style="margin-top:0.75rem; border:1px solid var(--outline-variant); background:var(--surface-low);">
+              <div style="display:grid; grid-template-columns: 60px 1fr 120px 100px; padding:0.75rem 1rem; border-bottom:1px solid var(--outline-variant); font-size:10px; font-weight:700; color:var(--on-surface-variant);">
+                <span>RANK</span>
+                <span>CONTENDER</span>
+                <span>QUERIES</span>
+                <span>TIME</span>
+              </div>
+              <div id="me-leaderboard-rows">
+                <div style="padding:1rem; text-align:center; color:var(--on-surface-variant);">No solves recorded for today yet. Be the first to conquer the box!</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Archive Jump -->
+          <div style="border-top:1px solid var(--outline-variant); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+            <span class="telemetry-micro">LOCAL SQLITE ENGINE ACTIVE</span>
+            <a href="#library" class="pill-btn" style="padding:0.75rem 2rem;">GO TO LIBRARY</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- User Switch Modal -->
+  <dialog id="user-modal" style="margin: auto; background: var(--surface); color: var(--on-surface); border: 1px solid var(--outline); padding: 2rem; width: 90%; max-width: 420px; outline:none;">
+    <div style="display:flex; flex-direction:column; gap:1rem;">
+      <span class="telemetry-bold">SWITCH CONTENDER</span>
+      <p style="font-size:12px; color:var(--on-surface-variant);">Enter a local username to maintain independent streaks and puzzle progress in SQLite.</p>
+      <input type="text" id="modal-username-input" class="terminal-input" style="border-bottom:1px solid var(--on-surface); padding:0.5rem 0;" placeholder="e.g. ada_lovelace"/>
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+        <button type="button" id="modal-cancel-btn" class="filter-btn">CANCEL</button>
+        <button type="button" id="modal-save-btn" class="filter-btn active">CONFIRM</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Local Vendored Three.js r128 -->
+  <script src="static/js/three.r128.min.js"></script>
+  <script src="static/js/cube3d.js"></script>
+  <script src="static/js/app.js"></script>
+</body>
+</html>

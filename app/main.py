@@ -35,6 +35,8 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 @app.get("/")
 def index():
     """Serve the single-page application shell."""
+    if (BASE_DIR / "index.html").exists():
+        return FileResponse(str(BASE_DIR / "index.html"))
     return FileResponse(str(STATIC_DIR / "index.html"))
 
 

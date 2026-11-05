@@ -33,8 +33,10 @@
   };
 
   // =====================================================================
-  // API CLIENT
+  // API CLIENT & GITHUB PAGES FALLBACK SIMULATOR
   // =====================================================================
+  const API_BASE = localStorage.getItem('blackbox_api_url') || '';
+
   async function apiFetch(endpoint, options = {}) {
     options.headers = options.headers || {};
     options.headers['X-Username'] = currentUsername;
@@ -42,12 +44,213 @@
       options.headers['Content-Type'] = 'application/json';
       options.body = JSON.stringify(options.body);
     }
-    const resp = await fetch(endpoint, options);
-    const data = await resp.json().catch(() => ({}));
-    if (!resp.ok) {
+
+    try {
+      const resp = await fetch(API_BASE + endpoint, options);
+      if (resp.ok) {
+        return await resp.json().catch(() => ({}));
+      }
+      if (window.location.hostname.includes('github.io') || !API_BASE) {
+        showStaticModeBanner();
+        return handleStaticSimulation(endpoint, options);
+      }
+      const data = await resp.json().catch(() => ({}));
       throw new Error(data.detail || data.error || 'Server request failed.');
+    } catch (err) {
+      if (window.location.hostname.includes('github.io') || !API_BASE) {
+        showStaticModeBanner();
+        return handleStaticSimulation(endpoint, options);
+      }
+      throw err;
     }
-    return data;
+  }
+
+  function showStaticModeBanner() {
+    if (document.getElementById('static-mode-indicator')) return;
+    const badge = document.createElement('div');
+    badge.id = 'static-mode-indicator';
+    badge.title = 'Running client-side preview mode on GitHub Pages. Connect live backend via localStorage.blackbox_api_url if hosted.';
+    badge.textContent = 'GH-PAGES PREVIEW';
+    badge.style.cssText = 'position:fixed; bottom:8px; right:8px; background:rgba(0,0,0,0.75); color:#CFE0F2; font-family:"Space Mono",monospace; font-size:10px; padding:4px 8px; border-radius:3px; z-index:99999; border:1px solid rgba(255,255,255,0.2); letter-spacing:1px;';
+    document.body.appendChild(badge);
+  }
+
+  function handleStaticSimulation(endpoint, options) {
+    const url = endpoint.split('?')[0];
+    const cleanUrl = url.replace(/\/$/, '');
+
+    // 1. Today Puzzle
+    if (cleanUrl === '/api/today') {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const qId = 'POTD-' + todayStr.replace(/-/g, '');
+      const queries = parseInt(localStorage.getItem('bb_' + qId + '_queries') || '0', 10);
+      const status = localStorage.getItem('bb_' + qId + '_status') || 'unattempted';
+      const history = JSON.parse(localStorage.getItem('bb_' + qId + '_history') || '[]');
+      return {
+        id: qId,
+        tier: 'medium',
+        daily_date: todayStr,
+        input_type: 'int',
+        topics: ['TRANSFORMATION', 'MODULO', 'PARITY'],
+        seconds_until_reset: 28800,
+        user_status: status,
+        queries_used: queries,
+        queries_history: history
+      };
+    }
+
+    // 2. Question Details
+    if (cleanUrl.startsWith('/api/question/')) {
+      const qId = cleanUrl.replace('/api/question/', '');
+      const queries = parseInt(localStorage.getItem('bb_' + qId + '_queries') || '0', 10);
+      const status = localStorage.getItem('bb_' + qId + '_status') || 'unattempted';
+      const history = JSON.parse(localStorage.getItem('bb_' + qId + '_history') || '[]');
+      const tier = qId.includes('E') ? 'easy' : (qId.includes('H') ? 'hard' : 'medium');
+      return {
+        id: qId,
+        tier: tier,
+        input_type: 'int',
+        topics: ['NUMERICAL', 'AFFINE'],
+        user_status: status,
+        queries_used: queries,
+        queries_history: history
+      };
+    }
+
+    // 3. Query Probe (POST)
+    if (cleanUrl === '/api/query') {
+      let b = {};
+      try { b = JSON.parse(options.body || '{}'); } catch(e) {}
+      const qId = b.question_id || 'POTD-TODAY';
+      const inputVal = b.input_val !== undefined ? b.input_val : (b.input !== undefined ? b.input : '0');
+      let n = Number(inputVal);
+      let outStr;
+      if (!isNaN(n)) {
+        outStr = String((n * 3) + 7);
+      } else {
+        outStr = String(inputVal).split('').reverse().join('');
+      }
+      let queries = parseInt(localStorage.getItem('bb_' + qId + '_queries') || '0', 10) + 1;
+      localStorage.setItem('bb_' + qId + '_queries', queries);
+      localStorage.setItem('bb_' + qId + '_status', 'attempted');
+      let history = JSON.parse(localStorage.getItem('bb_' + qId + '_history') || '[]');
+      history.push({ query_number: queries, input: String(inputVal), output: outStr, time: new Date().toLocaleTimeString() });
+      localStorage.setItem('bb_' + qId + '_history', JSON.stringify(history));
+
+      return {
+        status: 'success',
+        output: outStr,
+        queries_used: queries,
+        queries_remaining: Math.max(0, 30 - queries)
+      };
+    }
+
+    // 4. Submit Code (POST)
+    if (cleanUrl === '/api/submit') {
+      let b = {};
+      try { b = JSON.parse(options.body || '{}'); } catch(e) {}
+      const qId = b.question_id || 'POTD-TODAY';
+      localStorage.setItem('bb_' + qId + '_status', 'solved');
+      return {
+        status: 'accepted',
+        passed: true,
+        passed_tests: 200,
+        total_tests: 200,
+        execution_time_ms: 18.4
+      };
+    }
+
+    // 5. Give up (POST)
+    if (cleanUrl.startsWith('/api/giveup/')) {
+      const qId = cleanUrl.replace('/api/giveup/', '');
+      localStorage.setItem('bb_' + qId + '_status', 'surrendered');
+      return { status: 'surrendered' };
+    }
+
+    // 6. Reveal
+    if (cleanUrl.startsWith('/api/reveal/')) {
+      const qId = cleanUrl.replace('/api/reveal/', '');
+      const isSurrender = localStorage.getItem('bb_' + qId + '_status') === 'surrendered';
+      const queries = parseInt(localStorage.getItem('bb_' + qId + '_queries') || '5', 10);
+      return {
+        id: qId,
+        title: 'ARCHIVE // ' + qId,
+        rule_title: 'Affine Homomorphism',
+        formula: 'f(n) = 3n + 7',
+        docstring: 'Multiplies integer input by 3 and adds constant scalar 7.',
+        queries_used: queries,
+        surrendered: isSurrender,
+        efficiency_score: Math.max(10, 100 - (queries * 3)),
+        contender_rank: 'TOP 5%'
+      };
+    }
+
+    // 7. Library
+    if (cleanUrl === '/api/library') {
+      const tiers = ['easy', 'medium', 'hard'];
+      const questions = [];
+      for (let i = 1; i <= 30; i++) {
+        const tier = tiers[(i - 1) % 3];
+        const prefix = tier === 'easy' ? 'E' : (tier === 'medium' ? 'M' : 'H');
+        const numStr = String(i).rjust(3, '0');
+        const id = 'Q-' + prefix + numStr;
+        const status = localStorage.getItem('bb_' + id + '_status') || 'unattempted';
+        questions.push({
+          id: id,
+          tier: tier,
+          input_type: 'int',
+          topics: [tier.toUpperCase(), 'ALGORITHM'],
+          user_status: status
+        });
+      }
+      return {
+        count: questions.length,
+        questions: questions
+      };
+    }
+
+    // 8. User profile
+    if (cleanUrl === '/api/user/profile') {
+      return {
+        username: currentUsername,
+        streak: 7,
+        total_solved: 24,
+        easy_solved: 11,
+        medium_solved: 9,
+        hard_solved: 4,
+        joined_date: '2026-11-01'
+      };
+    }
+
+    // 9. Leaderboard
+    if (cleanUrl === '/api/leaderboard/daily') {
+      return {
+        entries: [
+          { rank: 1, username: 'CYBER_KONG', queries_used: 3, tier: 'hard', time: '00:14:22' },
+          { rank: 2, username: 'ZERO_TRACE', queries_used: 4, tier: 'medium', time: '01:05:40' },
+          { rank: 3, username: currentUsername, queries_used: 5, tier: 'medium', time: '02:18:11' },
+          { rank: 4, username: 'ADA_L', queries_used: 7, tier: 'easy', time: '03:41:00' },
+          { rank: 5, username: 'TURING_M', queries_used: 9, tier: 'hard', time: '05:12:49' }
+        ]
+      };
+    }
+
+    // 10. Random unsolved
+    if (cleanUrl === '/api/random-unsolved') {
+      return { id: 'Q-M004' };
+    }
+
+    // 11. User switch
+    if (cleanUrl === '/api/user/switch') {
+      return { username: currentUsername };
+    }
+
+    // 12. Batch
+    if (cleanUrl === '/api/library/batch') {
+      return { questions: [] };
+    }
+
+    return {};
   }
 
   // =====================================================================
